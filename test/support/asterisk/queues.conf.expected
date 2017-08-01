@@ -1,0 +1,72 @@
+[operators]
+strategy = rrmemory
+joinempty = yes
+musicclass = queue
+
+
+
+member => Local/100400@queue-dial-control,0,,PJSIP/400
+
+
+
+member => Local/101401@queue-dial-control,0,,PJSIP/401
+
+
+
+member => Local/102402@queue-dial-control,0,,PJSIP/402
+
+
+
+member => Local/103403@queue-dial-control,0,,PJSIP/403
+
+
+
+member => Local/104404@queue-dial-control,0,,PJSIP/404
+
+
+
+member => Local/105405@queue-dial-control,0,,PJSIP/405
+
+
+
+member => Local/106406@queue-dial-control,0,,PJSIP/406
+
+
+
+member => Local/107407@queue-dial-control,0,,PJSIP/407
+
+
+
+member => Local/108408@queue-dial-control,0,,PJSIP/408
+
+
+
+member => Local/109409@queue-dial-control,0,,PJSIP/409
+
+
+
+member => Local/110410@queue-dial-control,0,,PJSIP/410
+
+
+
+member => Local/111411@queue-dial-control,0,,PJSIP/411
+
+
+
+member => Local/112412@queue-dial-control,0,,PJSIP/412
+
+
+
+member => Local/113413@queue-dial-control,0,,PJSIP/413
+
+
+
+member => Local/114414@queue-dial-control,0,,PJSIP/414
+
+ringinuse = no
+announce-frequency = 30
+announce-holdtime = no
+retry = 0
+
+; Included to "queues.conf.includes"
+

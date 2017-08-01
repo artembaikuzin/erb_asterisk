@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+
+require 'erb'
+require 'find'
+require 'pathname'
+
+$exports = {}
+$templates = ''
+
+# Render template
+def render(template, vars)
+  tpl = File.read("#{$templates}/#{template}.erb")
+  e = ERB.new(tpl)
+
+  b = TOPLEVEL_BINDING
+  vars.each do |name, value|
+    b.local_variable_set(name, value)
+  end
+
+  e.result
+end
+
+# Declare current config file inclusion to file_name
+def include_to(file_name)
+  return unless TOPLEVEL_BINDING.local_variable_defined?(:current_conf_file)
+  $exports[file_name] = [] if $exports[file_name].nil?
+  arr = $exports[file_name]
+
+  current_conf_file = TOPLEVEL_BINDING.local_variable_get(:current_conf_file)
+  if arr.include?(current_conf_file)
+    puts "Skip #{current_conf_file} duplicate inclusion to #{file_name}"
+    return
+  end
+
+  arr << current_conf_file
+  "; Included to \"#{file_name}\""
+end
+
+def asterisk_root
+  return './' if File.exist?('asterisk.conf')
+  return 'asterisk/' if Dir.exist?('asterisk/')
+  raise 'Asterisk configuration not found'
+end
+
+root = asterisk_root
+$templates = "#{root}templates".freeze
+
+# Render ERB files
+Find.find(root) do |f|
+  next if File.directory?(f)
+  next if f.start_with?($templates)
+  next unless f.end_with?('.erb')
+
+  output_config = f.chomp('.erb')
+
+  TOPLEVEL_BINDING.local_variable_set(:current_conf_file,
+                                      output_config.sub(root, ''))
+
+  File.write(output_config, ERB.new(File.read(f)).result)
+end
+
+# Save includes
+$exports.each do |include_file, content|
+  s = ''
+  content.each do |file|
+    s << "#include \"#{file}\"\n"
+  end
+
+  File.write("#{root}#{include_file}", s)
+end

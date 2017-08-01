@@ -1,0 +1,13 @@
+[<%= name %>]
+strategy = rrmemory
+joinempty = yes
+musicclass = queue
+<% members.times.each do |i| %>
+<% group = 100 + i %>
+<% op = offset + i %>
+member => Local/<%= "#{group}#{op}" %>@queue-dial-control,0,,PJSIP/<%= op %>
+<% end %>
+ringinuse = no
+announce-frequency = 30
+announce-holdtime = no
+retry = 0
