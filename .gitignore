@@ -7,7 +7,5 @@
 /pkg/
 /spec/reports/
 /tmp/
-test/support/asterisk/*.conf
-test/support/asterisk_with_templates/*.conf
 *.gem
 .idea

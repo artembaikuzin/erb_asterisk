@@ -4,6 +4,11 @@ require 'erb'
 require 'find'
 require 'pathname'
 
+PROJECT_FILE = './erb_asterisk_project.rb'.freeze
+if File.exist?(PROJECT_FILE)
+  require PROJECT_FILE
+end
+
 $exports = {}
 $templates = ''
 

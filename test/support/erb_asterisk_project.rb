@@ -1,0 +1,1 @@
+OPERATOR_SIZE = 10
