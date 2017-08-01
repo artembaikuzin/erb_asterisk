@@ -104,6 +104,13 @@ entities/taxi/pjsip_endpoints.conf.erb:
 <% end %>
 ```
 
+Global variables
+
+Project avaliable global variables can be defined inside file `erb_asterisk_project.rb`, e.g.:
+```
+OPERATORS_SIZE = 31
+```
+
 ### Run erb_asterisk
 
     $ cd /etc/asterisk
