@@ -104,7 +104,7 @@ entities/taxi/pjsip_endpoints.conf.erb:
 <% end %>
 ```
 
-Global variables
+Global variables:
 
 Project avaliable global variables can be defined inside file `erb_asterisk_project.rb`, e.g.:
 ```
