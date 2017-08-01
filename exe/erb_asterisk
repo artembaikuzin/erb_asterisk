@@ -13,7 +13,7 @@ $exports = {}
 $templates = ''
 
 # Render template
-def render(template, vars)
+def render(template, vars = {})
   tpl = File.read("#{$templates}/#{template}.erb")
   e = ERB.new(tpl)
 
