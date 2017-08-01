@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require "minitest/reporters"
+require 'minitest/reporters'
 
 Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
 
@@ -23,8 +23,9 @@ class ErbAsteriskTest < MiniTest::Test
       File.delete(c) if File.exist?(c)
     end
 
-    system('../../exe/erb_asterisk')
+    result = system('../../exe/erb_asterisk')
 
+    assert_equal(result, true)
     cases.each do |c|
       assert_equal(File.read(c), File.read("#{c}.expected"))
     end
@@ -36,8 +37,9 @@ class ErbAsteriskTest < MiniTest::Test
     case_file = 'queues.conf'
     File.delete(case_file) if File.exist?(case_file)
 
-    system('../../../exe/erb_asterisk')
+    result = system('../../../exe/erb_asterisk')
 
+    assert_equal(result, true)
     assert_equal(File.read(case_file), File.read("#{case_file}.expected"))
   end
 
