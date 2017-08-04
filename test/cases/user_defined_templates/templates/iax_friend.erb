@@ -1,0 +1,15 @@
+[<%= name %>]
+type=friend
+username=<%= login %>
+secret=<%= password %>
+auth=md5
+host=<%= host %>
+<% unless defined?(context) %>
+    <% context = 'inbound' %>
+<% end %>
+context=<%= context %>
+qualify=yes
+trunk=yes
+disallow=all
+allow=alaw
+allow=ulaw

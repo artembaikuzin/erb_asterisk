@@ -4,9 +4,8 @@ require 'pathname'
 
 module ErbAsterisk
   # Render template
-  # TODO: render user defined templates
   def render(template, vars = {})
-    tpl = File.read("#{@templates_path}/#{template}.erb")
+    tpl = read_template(template)
     e = ERB.new(tpl)
 
     b = TOPLEVEL_BINDING
@@ -56,8 +55,8 @@ module ErbAsterisk
     @yields[tag]
   end
 
-  def execute
-    init_instance
+  def execute(opts)
+    init_instance(opts)
     load_project_file
 
     root = asterisk_root
@@ -73,10 +72,13 @@ module ErbAsterisk
   ERB_ASTERISK_CONF = 'asterisk.conf'.freeze
   ERB_ASTERISK_DIR = 'asterisk/'.freeze
 
-  def init_instance
+  def init_instance(opts)
     @exports = {}
     @templates_path = ''
     @yields = {}
+
+    user_path = opts[:templates].nil? ? '~/.erb_asterisk' : opts[:templates]
+    @user_templates = File.expand_path("#{user_path}/templates")
   end
 
   def asterisk_root
@@ -140,5 +142,16 @@ module ErbAsterisk
 
       File.write("#{root}#{include_file}", result)
     end
+  end
+
+  def read_template(template)
+    file_name = "#{template}.erb"
+    project_template = "#{@templates_path}/#{file_name}"
+    return File.read(project_template) if File.exist?(project_template)
+
+    user_template = "#{@user_templates}/#{file_name}"
+    return File.read(user_template) if File.exist?(user_template)
+
+    raise "Template not found: #{template}"
   end
 end

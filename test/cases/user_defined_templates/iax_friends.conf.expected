@@ -1,0 +1,14 @@
+[123]
+type=friend
+username=iax-login
+secret=zxcvasdf
+auth=md5
+host=localhost
+
+context=inbound-special
+qualify=yes
+trunk=yes
+disallow=all
+allow=alaw
+allow=ulaw
+

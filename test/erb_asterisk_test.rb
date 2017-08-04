@@ -22,19 +22,26 @@ class ErbAsteriskTest < MiniTest::Test
              'asterisk/entities/office/extensions.conf',
              'asterisk/entities/office/extensions_priority.conf']
 
-    run_test('test/support/', '../../exe/erb_asterisk', cases)
+    run_test('test/cases/', '../../exe/erb_asterisk', cases)
   end
 
   def test_inside_asterisk_dir
     cases = ['queues.conf', 'queues_all.conf']
 
-    run_test('test/support/asterisk_with_templates/',
+    run_test('test/cases/asterisk_with_templates/',
              '../../../exe/erb_asterisk', cases)
   end
 
   def test_no_asterisk_configuration
-    Dir.chdir('test/support/no_config/')
+    Dir.chdir('test/cases/no_config/')
     assert_equal(system('../../../exe/erb_asterisk'), false)
+  end
+
+  def test_user_defined_templates
+    cases = ['iax_register.conf', 'iax_friends.conf']
+    run_test('test/cases/user_defined_templates/',
+             '../../../exe/erb_asterisk --templates ../../user_defined_templates',
+             cases)
   end
 
   private
