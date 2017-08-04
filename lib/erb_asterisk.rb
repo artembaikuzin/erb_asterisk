@@ -44,7 +44,7 @@ module ErbAsterisk
       @yields[tag] << "\n#{line}"
     end
 
-    nil
+    "; Applied \"#{line}\" to :#{tag}"
   end
 
   # Define place where put apply_line_to

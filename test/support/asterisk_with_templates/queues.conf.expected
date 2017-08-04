@@ -1,3 +1,4 @@
+
 [operators]
 strategy = rrmemory
 joinempty = yes
@@ -100,3 +101,5 @@ ringinuse = no
 timeout = 15
 retry = 0
 
+
+; Applied "operators" to :all_queues
