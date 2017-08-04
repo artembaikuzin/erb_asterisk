@@ -35,7 +35,7 @@ This gem is add ability to declare asterisk configuration with ERB files.
 
 ### Templates
 
-Templates can be defined only in `asterisk/templates` directory.
+Templates can be defined in `asterisk/templates`, user home directory `~/.erb_asterisk/templastes`, or via command line argument `--templates`.
 
 pjsip_operators.erb:
 ```
@@ -121,11 +121,30 @@ extensions.conf:
 include => office-inbound
 ```
 
+#### Escape special symbols in extension name
+```
+exten => _<%= escape_exten 'LongExtension1234!' %>-X.,1,NoOp
+```
+
+Renders to:
+```
+exten => _Lo[n]gE[x]te[n]sio[n]1234[!]-X.,1,NoOp
+```
+
 #### Global variables
 
 Project available global variables can be defined inside file `erb_asterisk_project.rb`, e.g.:
 ```
 OPERATORS_SIZE = 31
+```
+
+### Command line arguments
+
+```
+usage: exe/erb_asterisk [options]
+    -t, --templates  set templates path (e.g.: ~/.erb_asterisk)
+    -v, --version    print the version
+    -h, --help       print this help
 ```
 
 ### Run erb_asterisk

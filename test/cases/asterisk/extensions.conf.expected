@@ -2,3 +2,10 @@
 
 [inbound]
 include => office-inbound
+
+exten => v[N]oV[!][.]123,1,NoOp
+same => Dial(IAX2/longdistance)
+same => Hangup
+
+exten => _Lo[n]gE[x]te[n]sio[n]1234[!]-X.,1,NoOp
+

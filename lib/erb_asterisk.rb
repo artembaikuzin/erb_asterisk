@@ -55,6 +55,17 @@ module ErbAsterisk
     @yields[tag]
   end
 
+  # Escape special symbols in extension name
+  #
+  # vnov -> v[n]on
+  # LongExtension1234! -> Lo[n]gE[x]te[n]sio[n]1234[!]
+  #
+  def escape_exten(exten)
+    exten.each_char.reduce('') do |s, c|
+      s << (ERB_ASTERISK_PATTERNS.include?(c.downcase) ? "[#{c}]" : c)
+    end
+  end
+
   def execute(opts)
     init_instance(opts)
     load_project_file
@@ -71,6 +82,7 @@ module ErbAsterisk
   ERB_PROJECT_FILE = './erb_asterisk_project.rb'.freeze
   ERB_ASTERISK_CONF = 'asterisk.conf'.freeze
   ERB_ASTERISK_DIR = 'asterisk/'.freeze
+  ERB_ASTERISK_PATTERNS = %w(x z n . !)
 
   def init_instance(opts)
     @exports = {}
