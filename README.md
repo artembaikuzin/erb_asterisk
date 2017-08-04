@@ -66,14 +66,14 @@ announce-holdtime = no
 retry = 0
 ```
 
-### ERB configuration
+### ERB extensions
 
-Rendering template:
+#### Render template
 ```
 <%= render 'template_file_name_without_ext', variable_name: variable_value %>
 ```
 
-Define inclusion (asterisk `#include` command) to external configuration file:
+#### Define inclusion to external configuration file
 ```
 <%= include_to 'pjsip_endpoints.conf.includes' %>
 ```
@@ -88,25 +88,42 @@ pjsip_endpoints.conf.includes:
 
 You can include this file to your actual pjsip_endpoints.conf.
 
-entities/office/pjsip_endpoints.conf.erb:
+Also, you can define priority for inclusion:
 ```
 <%= include_to 'pjsip_endpoints.conf.includes' %>
-<%= 15.times.each do |i| %>
-<%= render 'pjsip_operators', op: 100 + i %>
-<% end %>
+<%= include_to 'pjsip_endpoints.conf.includes', priority: 999 %>
+```
+This will render to:
+```
+; priority: 999
+#include "entities/taxi/pjsip_endpoints.conf"
+#include "entities/office/pjsip_endpoints.conf"
 ```
 
-entities/taxi/pjsip_endpoints.conf.erb:
+#### Apply line to a tag
+
+office/extensions.conf.erb:
 ```
-<%= include_to 'pjsip_endpoints.conf.includes' %>
-<%= 5.times.each do |i| %>
-<%= render 'pjsip_operators', op: 200 + i %>
-<% end %>
+[office-inbound]
+<%= apply_line_to :global_inbound_context, 'include => office-inbound' %>
 ```
 
-Global variables:
+extensions.conf.erb:
+```
+[inbound]
+<% yield_here :global_inbound_context %>
+```
+This will render to:
 
-Project avaliable global variables can be defined inside file `erb_asterisk_project.rb`, e.g.:
+extensions.conf:
+```
+[inbound]
+include => office-inbound
+```
+
+#### Global variables
+
+Project available global variables can be defined inside file `erb_asterisk_project.rb`, e.g.:
 ```
 OPERATORS_SIZE = 31
 ```

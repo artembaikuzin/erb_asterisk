@@ -1,0 +1,4 @@
+#include "extensions.conf.includes"
+
+[inbound]
+include => office-inbound

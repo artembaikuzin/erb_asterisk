@@ -17,7 +17,10 @@ class ErbAsteriskTest < MiniTest::Test
 
     cases = ['asterisk/queues.conf', 'asterisk/queues.conf.includes',
              'asterisk/entities/office/pjsip_endpoints.conf',
-             'asterisk/pjsip_endpoints.conf.includes']
+             'asterisk/pjsip_endpoints.conf.includes',
+             'asterisk/extensions.conf', 'asterisk/extensions.conf.includes',
+             'asterisk/entities/office/extensions.conf',
+             'asterisk/entities/office/extensions_priority.conf']
 
     cases.each do |c|
       File.delete(c) if File.exist?(c)

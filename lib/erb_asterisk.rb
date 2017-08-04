@@ -4,8 +4,9 @@ require 'pathname'
 
 module ErbAsterisk
   # Render template
+  # TODO: render user defined templates
   def render(template, vars = {})
-    tpl = File.read("#{@templates}/#{template}.erb")
+    tpl = File.read("#{@templates_path}/#{template}.erb")
     e = ERB.new(tpl)
 
     b = TOPLEVEL_BINDING
@@ -17,19 +18,42 @@ module ErbAsterisk
   end
 
   # Declare current config file inclusion to file_name
-  def include_to(file_name)
+  # args can has :priority key (larger the number - higher the priority)
+  def include_to(file_name, args = {})
     return unless TOPLEVEL_BINDING.local_variable_defined?(:current_conf_file)
+    args = { priority: 0 }.merge(args)
     @exports[file_name] = [] if @exports[file_name].nil?
+
     arr = @exports[file_name]
 
     current_conf_file = TOPLEVEL_BINDING.local_variable_get(:current_conf_file)
-    if arr.include?(current_conf_file)
+    unless arr.index { |i| i[:file] == current_conf_file }.nil?
       puts "Skip #{current_conf_file} duplicate inclusion to #{file_name}"
       return
     end
 
-    arr << current_conf_file
+    arr << { file: current_conf_file, priority: args[:priority] }
     "; Included to \"#{file_name}\""
+  end
+
+  # Apply line to place where yield_here :tag defined
+  def apply_line_to(tag, line)
+    if @yields[tag].nil?
+      @yields[tag] = line
+    else
+      @yields[tag] << "\n#{line}"
+    end
+
+    nil
+  end
+
+  # Define place where put apply_line_to
+  def yield_here(tag)
+    "<%= yield_actual :#{tag} %>"
+  end
+
+  def yield_actual(tag)
+    @yields[tag]
   end
 
   def execute
@@ -37,7 +61,7 @@ module ErbAsterisk
     load_project_file
 
     root = asterisk_root
-    @templates = "#{root}templates".freeze
+    @templates_path = "#{root}templates".freeze
 
     render_files(root)
     export_includes(root)
@@ -51,7 +75,8 @@ module ErbAsterisk
 
   def init_instance
     @exports = {}
-    @templates = ''
+    @templates_path = ''
+    @yields = {}
   end
 
   def asterisk_root
@@ -65,28 +90,55 @@ module ErbAsterisk
   end
 
   def render_files(root)
+    erbs = load_erbs(root)
+
+    # It does two round of rendering because of apply_line_to and yield_here.
+    # First round accumulates apply_line_to declarations and converts
+    # yield_here to yield_actual.
+    render_erbs(erbs)
+    # Second round replaces yield_actual with accumulated apply_line_to.
+    render_erbs(erbs)
+
+    save_erbs(erbs)
+    export_includes(root)
+  end
+
+  def load_erbs(root)
+    erbs = {}
+
     Find.find(root) do |f|
       next if File.directory?(f)
-      next if f.start_with?(@templates)
+      next if f.start_with?(@templates_path)
       next unless f.end_with?('.erb')
 
-      output_config = f.chomp('.erb')
-
-      TOPLEVEL_BINDING.local_variable_set(:current_conf_file,
-                                          output_config.sub(root, ''))
-
-      File.write(output_config, ERB.new(File.read(f)).result)
+      erbs[f] = { config: f.chomp('.erb'),
+                  content: File.read(f) }
     end
+
+    erbs
+  end
+
+  def render_erbs(erbs)
+    erbs.each do |file, value|
+      # Declare global variable with current erb file name for include_to method:
+      TOPLEVEL_BINDING.local_variable_set(:current_conf_file, value[:config])
+      erbs[file][:content] = ERB.new(value[:content]).result
+    end
+  end
+
+  def save_erbs(erbs)
+    erbs.each { |_, value| File.write(value[:config], value[:content]) }
   end
 
   def export_includes(root)
     @exports.each do |include_file, content|
-      s = ''
-      content.each do |file|
-        s << "#include \"#{file}\"\n"
+      content = content.sort_by { |i| -i[:priority] }
+      result = content.reduce('') do |s, i|
+        s << "; priority: #{i[:priority]}\n" if i[:priority] != 0
+        s << "#include \"#{i[:file].sub(root, '')}\"\n"
       end
 
-      File.write("#{root}#{include_file}", s)
+      File.write("#{root}#{include_file}", result)
     end
   end
 end
