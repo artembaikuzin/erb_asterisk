@@ -105,13 +105,13 @@ This will render to:
 office/extensions.conf.erb:
 ```
 [office-inbound]
-<%= apply_line_to :global_inbound_context, 'include => office-inbound' %>
+<% apply_line_to :global_inbound_context, 'include => office-inbound' %>
 ```
 
 extensions.conf.erb:
 ```
 [inbound]
-<% yield_here :global_inbound_context %>
+<%= yield_here :global_inbound_context %>
 ```
 This will render to:
 
