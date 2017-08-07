@@ -1,2 +1,9 @@
 ; Yield for :all_queues
 operators
+
+[namename]
+
+
+
+host=1.2.3.4
+

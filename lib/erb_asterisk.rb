@@ -8,12 +8,12 @@ module ErbAsterisk
     tpl = read_template(template)
     e = ERB.new(tpl)
 
-    b = TOPLEVEL_BINDING
+    b = binding
     vars.each do |name, value|
       b.local_variable_set(name, value)
     end
 
-    e.result
+    e.result(b)
   end
 
   # Declare current config file inclusion to file_name
