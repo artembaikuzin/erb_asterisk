@@ -52,7 +52,7 @@ module ErbAsterisk
   end
 
   def yield_actual(tag)
-    @yields[tag]
+    "; Yield for :#{tag}\n" << @yields[tag]
   end
 
   # Escape special symbols in extension name

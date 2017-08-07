@@ -118,6 +118,7 @@ This will render to:
 extensions.conf:
 ```
 [inbound]
+; Yield for :global_inbound_context
 include => office-inbound
 ```
 
