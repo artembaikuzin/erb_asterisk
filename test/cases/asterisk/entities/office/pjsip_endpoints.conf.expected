@@ -1,7 +1,5 @@
 ; Included to "pjsip_endpoints.conf.includes"
 
-
-
 [100](operator)
 auth=100
 aors=100
@@ -9,8 +7,6 @@ set_var=GROUP()=operator100
 [100](operator-auth)
 username=100
 [100](aor-single-reg)
-
-
 [101](operator)
 auth=101
 aors=101
@@ -18,8 +14,6 @@ set_var=GROUP()=operator101
 [101](operator-auth)
 username=101
 [101](aor-single-reg)
-
-
 [102](operator)
 auth=102
 aors=102
@@ -27,8 +21,6 @@ set_var=GROUP()=operator102
 [102](operator-auth)
 username=102
 [102](aor-single-reg)
-
-
 [103](operator)
 auth=103
 aors=103
@@ -36,8 +28,6 @@ set_var=GROUP()=operator103
 [103](operator-auth)
 username=103
 [103](aor-single-reg)
-
-
 [104](operator)
 auth=104
 aors=104
@@ -45,8 +35,6 @@ set_var=GROUP()=operator104
 [104](operator-auth)
 username=104
 [104](aor-single-reg)
-
-
 [105](operator)
 auth=105
 aors=105
@@ -54,8 +42,6 @@ set_var=GROUP()=operator105
 [105](operator-auth)
 username=105
 [105](aor-single-reg)
-
-
 [106](operator)
 auth=106
 aors=106
@@ -63,8 +49,6 @@ set_var=GROUP()=operator106
 [106](operator-auth)
 username=106
 [106](aor-single-reg)
-
-
 [107](operator)
 auth=107
 aors=107
@@ -72,8 +56,6 @@ set_var=GROUP()=operator107
 [107](operator-auth)
 username=107
 [107](aor-single-reg)
-
-
 [108](operator)
 auth=108
 aors=108
@@ -81,8 +63,6 @@ set_var=GROUP()=operator108
 [108](operator-auth)
 username=108
 [108](aor-single-reg)
-
-
 [109](operator)
 auth=109
 aors=109

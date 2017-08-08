@@ -1,7 +1,7 @@
 <%= include_to 'pjsip_endpoints.conf.includes' %>
 
-<% OPERATOR_SIZE.times.each do |i| %>
-<% op = 100 + i %>
+<% OPERATOR_SIZE.times.each do |i| -%>
+<% op = 100 + i -%>
 [<%= op %>](operator)
 auth=<%= op %>
 aors=<%= op %>

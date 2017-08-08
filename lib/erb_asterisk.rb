@@ -6,7 +6,7 @@ module ErbAsterisk
   # Render template
   def render(template, vars = {})
     tpl = read_template(template)
-    e = ERB.new(tpl)
+    e = new_erb(tpl)
 
     b = binding
     vars.each do |name, value|
@@ -136,7 +136,7 @@ module ErbAsterisk
     erbs.each do |file, value|
       # Declare global variable with current erb file name for include_to method:
       TOPLEVEL_BINDING.local_variable_set(:current_conf_file, value[:config])
-      erbs[file][:content] = ERB.new(value[:content]).result
+      erbs[file][:content] = new_erb(value[:content]).result
     end
   end
 
@@ -165,5 +165,9 @@ module ErbAsterisk
     return File.read(user_template) if File.exist?(user_template)
 
     raise "Template not found: #{template}"
+  end
+
+  def new_erb(content)
+    ERB.new(content, nil, '-')
   end
 end
