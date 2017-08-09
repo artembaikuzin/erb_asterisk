@@ -1,3 +1,9 @@
 <%= include_to 'extensions.conf.includes', priority: 999 %>
 
 [hello-priority-inclusion]
+<% content_for :outbound, priority: 333 do %>
+exten => 1234,1,NoOp
+<% end %>
+
+<% apply_line_to :global_inbound, 'include => office-inbound-prior',
+                 priority: 10 %>

@@ -9,3 +9,5 @@ same => Hangup
 
 exten => _<%= escape_exten 'LongExtension1234!' %>-X.,1,NoOp
 
+[outbound]
+<%= yield_here :outbound %>

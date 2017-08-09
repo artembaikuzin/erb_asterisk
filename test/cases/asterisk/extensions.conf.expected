@@ -2,11 +2,25 @@
 
 [inbound]
 ; Yield for :global_inbound
+; priority: 10
+include => office-inbound-prior
 include => office-inbound
+
 
 exten => v[N]oV[!][.]123,1,NoOp
 same => Dial(IAX2/longdistance)
 same => Hangup
 
 exten => _Lo[n]gE[x]te[n]sio[n]1234[!]-X.,1,NoOp
+
+[outbound]
+; Yield for :outbound
+; priority: 333
+
+exten => 1234,1,NoOp
+
+
+exten => _super_e[x]te[n]sio[n]-X.,1,NoOp
+same => n,Goto(another-extension,${EXTEN:16},1)
+
 

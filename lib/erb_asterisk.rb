@@ -2,69 +2,16 @@ require 'erb'
 require 'find'
 require 'pathname'
 
+require 'erb_asterisk/render'
+require 'erb_asterisk/inclusion'
+require 'erb_asterisk/yields'
+require 'erb_asterisk/utils'
+
 module ErbAsterisk
-  # Render template
-  def render(template, vars = {})
-    tpl = read_template(template)
-    e = new_erb(tpl)
-
-    b = binding
-    vars.each do |name, value|
-      b.local_variable_set(name, value)
-    end
-
-    e.result(b)
-  end
-
-  # Declare current config file inclusion to file_name
-  # args can has :priority key (larger the number - higher the priority)
-  def include_to(file_name, args = {})
-    return unless TOPLEVEL_BINDING.local_variable_defined?(:current_conf_file)
-    args = { priority: 0 }.merge(args)
-    @exports[file_name] = [] if @exports[file_name].nil?
-
-    arr = @exports[file_name]
-
-    current_conf_file = TOPLEVEL_BINDING.local_variable_get(:current_conf_file)
-    unless arr.index { |i| i[:file] == current_conf_file }.nil?
-      puts "Skip #{current_conf_file} duplicate inclusion to #{file_name}"
-      return
-    end
-
-    arr << { file: current_conf_file, priority: args[:priority] }
-    "; Included to \"#{file_name}\""
-  end
-
-  # Apply line to place where yield_here :tag defined
-  def apply_line_to(tag, line)
-    if @yields[tag].nil?
-      @yields[tag] = line
-    else
-      @yields[tag] << "\n#{line}"
-    end
-
-    "; Applied \"#{line}\" to :#{tag}"
-  end
-
-  # Define place where put apply_line_to
-  def yield_here(tag)
-    "<%= yield_actual :#{tag} %>"
-  end
-
-  def yield_actual(tag)
-    "; Yield for :#{tag}\n" << @yields[tag]
-  end
-
-  # Escape special symbols in extension name
-  #
-  # vnov -> v[n]on
-  # LongExtension1234! -> Lo[n]gE[x]te[n]sio[n]1234[!]
-  #
-  def escape_exten(exten)
-    exten.each_char.reduce('') do |s, c|
-      s << (ERB_ASTERISK_PATTERNS.include?(c.downcase) ? "[#{c}]" : c)
-    end
-  end
+  include Render
+  include Inclusion
+  include Yields
+  include Utils
 
   def execute(opts)
     init_instance(opts)
@@ -82,7 +29,6 @@ module ErbAsterisk
   ERB_PROJECT_FILE = './erb_asterisk_project.rb'.freeze
   ERB_ASTERISK_CONF = 'asterisk.conf'.freeze
   ERB_ASTERISK_DIR = 'asterisk/'.freeze
-  ERB_ASTERISK_PATTERNS = %w(x z n . !)
 
   def init_instance(opts)
     @exports = {}
@@ -168,6 +114,10 @@ module ErbAsterisk
   end
 
   def new_erb(content)
-    ERB.new(content, nil, '-')
+    ERB.new(content, nil, '-', '@erb_output')
+  end
+
+  def default_args!(args)
+    args[:priority] = 0 if args[:priority].nil?
   end
 end

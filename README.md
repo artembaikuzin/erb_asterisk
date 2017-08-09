@@ -68,12 +68,12 @@ retry = 0
 
 ### ERB extensions
 
-#### Render template
+#### render: render template
 ```
 <%= render 'template_file_name_without_ext', variable_name: variable_value %>
 ```
 
-#### Define inclusion to external configuration file
+#### include_to: define inclusion to external configuration file
 ```
 <%= include_to 'pjsip_endpoints.conf.includes' %>
 ```
@@ -88,7 +88,7 @@ pjsip_endpoints.conf.includes:
 
 You can include this file to your actual pjsip_endpoints.conf.
 
-Also, you can define priority for inclusion:
+Also, you can define `priority` argument for inclusion:
 ```
 <%= include_to 'pjsip_endpoints.conf.includes' %>
 <%= include_to 'pjsip_endpoints.conf.includes', priority: 999 %>
@@ -100,7 +100,7 @@ This will render to:
 #include "entities/office/pjsip_endpoints.conf"
 ```
 
-#### Apply line to a tag
+#### apply_line_to: apply line to a tag
 
 office/extensions.conf.erb:
 ```
@@ -122,7 +122,38 @@ extensions.conf:
 include => office-inbound
 ```
 
-#### Escape special symbols in extension name
+#### content_for: apply block to a tag
+office/extensions.conf.erb:
+```
+<% content_for :global_outbound_context do %>
+<% exten = 'super_extension-' -%>
+exten => _<%= escape_exten exten %>X.,1,NoOp
+same => n,Goto(another-extension,${EXTEN:<%= exten.size %>},1)
+<% end %>
+```
+
+extensions.conf.erb:
+```
+[outbound]
+<%= yield_here :global_outbound_context %>
+```
+
+extensions.conf:
+```
+[outbound]
+; Yield for :outbound
+exten => _super_e[x]te[n]sio[n]-X.,1,NoOp
+same => n,Goto(another-extension,${EXTEN:16},1)
+```
+
+`apply_line_to` and `content_for` can has `priority` argument, just like `include_to` method:
+```
+<% content_for :global_outbound_context, priority: 999 do %>
+...
+<% apply_line_to :outbound_glob, 'include => outbound', priority: -10 %>
+```
+
+#### escape_exten: escape special symbols in extension name
 ```
 exten => _<%= escape_exten 'LongExtension1234!' %>-X.,1,NoOp
 ```
@@ -137,6 +168,9 @@ exten => _Lo[n]gE[x]te[n]sio[n]1234[!]-X.,1,NoOp
 Project available global variables can be defined inside file `erb_asterisk_project.rb`, e.g.:
 ```
 OPERATORS_SIZE = 31
+
+LAN = '192.168.1.0/255.255.255.0'
+EXTERNAL_HOST = 'no-ip.some.host.eg'
 ```
 
 ### Command line arguments
