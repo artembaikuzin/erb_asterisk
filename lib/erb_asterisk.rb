@@ -6,12 +6,16 @@ require 'erb_asterisk/render'
 require 'erb_asterisk/inclusion'
 require 'erb_asterisk/yields'
 require 'erb_asterisk/utils'
+require 'erb_asterisk/log'
+require 'erb_asterisk/file_cache'
 
 module ErbAsterisk
   include Render
   include Inclusion
   include Yields
   include Utils
+  include Log
+  include FileCache
 
   def execute(opts)
     init_instance(opts)
@@ -21,7 +25,6 @@ module ErbAsterisk
     @templates_path = "#{root}templates".freeze
 
     render_files(root)
-    export_includes(root)
   end
 
   private
@@ -34,6 +37,9 @@ module ErbAsterisk
     @exports = {}
     @templates_path = ''
     @yields = {}
+
+    log_init(opts[:verbose])
+    file_cache_init
 
     user_path = opts[:templates].nil? ? '~/.erb_asterisk' : opts[:templates]
     @user_templates = File.expand_path("#{user_path}/templates")
@@ -55,9 +61,14 @@ module ErbAsterisk
     # It does two round of rendering because of apply_line_to and yield_here.
     # First round accumulates apply_line_to declarations and converts
     # yield_here to yield_actual.
+    log_debug('FIRST ROUND:')
     render_erbs(erbs)
+    log_debug('')
+
     # Second round replaces yield_actual with accumulated apply_line_to.
+    log_debug('SECOND ROUND:')
     render_erbs(erbs)
+    log_debug('')
 
     save_erbs(erbs)
     export_includes(root)
@@ -80,9 +91,16 @@ module ErbAsterisk
 
   def render_erbs(erbs)
     erbs.each do |file, value|
+      # Skip on second round all erbs without yield_here method
+      next if value[:skip]
+
       # Declare global variable with current erb file name for include_to method:
       TOPLEVEL_BINDING.local_variable_set(:current_conf_file, value[:config])
-      erbs[file][:content] = new_erb(value[:content]).result
+      log_debug("ERB: #{file}", 1)
+
+      @yield_here_occured = false
+      value[:content] = new_erb(value[:content]).result
+      value[:skip] = true unless @yield_here_occured
     end
   end
 
@@ -99,16 +117,23 @@ module ErbAsterisk
       end
 
       File.write("#{root}#{include_file}", result)
+      log_debug("export_includes: #{include_file}")
     end
   end
 
   def read_template(template)
     file_name = "#{template}.erb"
     project_template = "#{@templates_path}/#{file_name}"
-    return File.read(project_template) if File.exist?(project_template)
+    if file_exist?(project_template)
+      log_debug("read_template: #{project_template}", 2)
+      return file_read(project_template)
+    end
 
     user_template = "#{@user_templates}/#{file_name}"
-    return File.read(user_template) if File.exist?(user_template)
+    if file_exist?(user_template)
+      log_debug("read_template: #{user_template}", 2)
+      return file_read(user_template)
+    end
 
     raise "Template not found: #{template}"
   end

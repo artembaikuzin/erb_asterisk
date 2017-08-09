@@ -7,8 +7,9 @@ module ErbAsterisk
       Slop.parse do |o|
         o.string '-t', '--templates',
                  'set templates path (e.g.: ~/.erb_asterisk)'
+        o.bool '-v', '--verbose', 'enable verbose mode'
 
-        o.on '-v', '--version', 'print the version' do
+        o.on '--version', 'print the version' do
           puts "#{VERSION}"
           exit
         end

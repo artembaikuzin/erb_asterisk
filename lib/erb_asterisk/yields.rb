@@ -4,6 +4,8 @@ module ErbAsterisk
     def apply_line_to(tag, line, args = {})
       default_args!(args)
       apply_to_yields(:line, tag, line, args[:priority])
+
+      log_debug("apply_line_to: :#{tag}, #{line}, #{args}", 2)
       "; Applied \"#{line}\" to :#{tag}"
     end
 
@@ -12,12 +14,16 @@ module ErbAsterisk
       default_args!(args)
       old_output = @erb_output
       @erb_output = ''
+
       apply_to_yields(:block, tag, yield, args[:priority])
+
+      log_debug("content_for: :#{tag}, #{args}", 2)
       @erb_output = old_output
     end
 
     # Define place where put apply_line_to
     def yield_here(tag)
+      @yield_here_occured = true
       "<%= yield_actual :#{tag} %>"
     end
 
@@ -34,6 +40,9 @@ module ErbAsterisk
 
     def output_yield(tag)
       a = @yields[tag]
+
+      log_debug("yield_here: :#{tag}, size=#{a.size}", 2)
+
       a = a.sort_by { |i| -i[:priority] }
       result = a.reduce('') do |s, i|
         s << "; priority: #{i[:priority]}\n" if i[:priority] != 0
