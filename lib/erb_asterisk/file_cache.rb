@@ -1,5 +1,7 @@
 module ErbAsterisk
   module FileCache
+    private
+
     def file_read(file_name)
       content = @file_cache[file_name]
       if content

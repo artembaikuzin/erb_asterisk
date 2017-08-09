@@ -2,6 +2,8 @@ require 'digest'
 
 module ErbAsterisk
   module SoftWrite
+    private
+
     # Write to file only if something has changed
     def soft_write(file_name, content)
       if !File.exist?(file_name) ||

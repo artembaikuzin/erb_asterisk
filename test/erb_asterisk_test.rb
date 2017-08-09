@@ -57,6 +57,11 @@ class ErbAsteriskTest < MiniTest::Test
     assert_equal(before, after)
   end
 
+  def test_no_erb_files
+    Dir.chdir('test/cases/no_erb_files/')
+    assert_equal(system('../../../exe/erb_asterisk'), true)
+  end
+
   private
 
   def run_test(dir, command, cases, no_delete = false)

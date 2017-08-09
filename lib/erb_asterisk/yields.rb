@@ -3,7 +3,7 @@ module ErbAsterisk
     # Apply line to place where yield_here :tag defined
     def apply_line_to(tag, line, args = {})
       default_args!(args)
-      apply_to_yields(:line, tag, line, args[:priority])
+      apply_to_yields(tag, line, args[:priority])
 
       log_debug("apply_line_to: :#{tag}, #{line}, #{args}", 2)
       "; Applied \"#{line}\" to :#{tag}"
@@ -15,7 +15,7 @@ module ErbAsterisk
       old_output = @erb_output
       @erb_output = ''
 
-      apply_to_yields(:block, tag, yield, args[:priority])
+      apply_to_yields(tag, yield, args[:priority])
 
       log_debug("content_for: :#{tag}, #{args}", 2)
       @erb_output = old_output
@@ -33,9 +33,9 @@ module ErbAsterisk
 
     private
 
-    def apply_to_yields(type, tag, content, priority)
+    def apply_to_yields(tag, content, priority)
       @yields[tag] = [] if @yields[tag].nil?
-      @yields[tag] << { content: content, priority: priority, type: type }
+      @yields[tag] << { content: content, priority: priority }
     end
 
     def output_yield(tag)

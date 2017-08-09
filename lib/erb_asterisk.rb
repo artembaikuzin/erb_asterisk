@@ -60,6 +60,11 @@ module ErbAsterisk
   def render_files(root)
     erbs = load_erbs(root)
 
+    if erbs.size == 0
+      log_debug('nothing to do')
+      return
+    end
+
     # It does two round of rendering because of apply_line_to and yield_here.
     # First round accumulates apply_line_to declarations and converts
     # yield_here to yield_actual.
