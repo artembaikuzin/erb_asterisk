@@ -8,6 +8,7 @@ require 'erb_asterisk/yields'
 require 'erb_asterisk/utils'
 require 'erb_asterisk/log'
 require 'erb_asterisk/file_cache'
+require 'erb_asterisk/soft_write'
 
 module ErbAsterisk
   include Render
@@ -16,6 +17,7 @@ module ErbAsterisk
   include Utils
   include Log
   include FileCache
+  include SoftWrite
 
   def execute(opts)
     init_instance(opts)
@@ -70,7 +72,7 @@ module ErbAsterisk
     render_erbs(erbs)
     log_debug('')
 
-    save_erbs(erbs)
+    save_configs(erbs)
     export_includes(root)
   end
 
@@ -94,8 +96,8 @@ module ErbAsterisk
       # Skip on second round all erbs without yield_here method
       next if value[:skip]
 
-      # Declare global variable with current erb file name for include_to method:
-      TOPLEVEL_BINDING.local_variable_set(:current_conf_file, value[:config])
+      # Declare variable with current erb file name for include_to method:
+      @current_conf_file = value[:config]
       log_debug("ERB: #{file}", 1)
 
       @yield_here_occured = false
@@ -104,8 +106,12 @@ module ErbAsterisk
     end
   end
 
-  def save_erbs(erbs)
-    erbs.each { |_, value| File.write(value[:config], value[:content]) }
+  def save_configs(erbs)
+    erbs.each do |_, value|
+      config = value[:config]
+      next unless soft_write(config, value[:content])
+      log_debug("save_configs: #{config}")
+    end
   end
 
   def export_includes(root)
@@ -116,8 +122,9 @@ module ErbAsterisk
         s << "#include \"#{i[:file].sub(root, '')}\"\n"
       end
 
-      File.write("#{root}#{include_file}", result)
-      log_debug("export_includes: #{include_file}")
+      f = "#{root}#{include_file}"
+      next unless soft_write(f, result)
+      log_debug("export_includes: #{f}")
     end
   end
 

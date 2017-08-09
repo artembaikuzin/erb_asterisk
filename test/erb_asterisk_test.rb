@@ -44,13 +44,28 @@ class ErbAsteriskTest < MiniTest::Test
              cases)
   end
 
+  def test_soft_write
+    root = 'test/cases/soft_write/'
+    file = 'asterisk.conf'
+    conf_path = File.expand_path("#{root}#{file}")
+
+    before = File.stat(conf_path)
+    run_test(root, '../../../exe/erb_asterisk',
+             [file], true)
+
+    after = File.stat(conf_path)
+    assert_equal(before, after)
+  end
+
   private
 
-  def run_test(dir, command, cases)
+  def run_test(dir, command, cases, no_delete = false)
     Dir.chdir(dir)
 
-    cases.each do |c|
-      File.delete(c) if File.exist?(c)
+    unless no_delete
+      cases.each do |c|
+        File.delete(c) if File.exist?(c)
+      end
     end
 
     result = system(command)
