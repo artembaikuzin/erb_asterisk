@@ -60,7 +60,7 @@ module ErbAsterisk
   def render_files(root)
     erbs = load_erbs(root)
 
-    if erbs.size == 0
+    if erbs.empty?
       log_debug('nothing to do')
       return
     end

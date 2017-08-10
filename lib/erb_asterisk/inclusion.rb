@@ -8,7 +8,7 @@ module ErbAsterisk
 
       arr = @exports[file_name]
 
-      unless arr.index { |i| i[:file] == @current_conf_file }.nil?
+      if arr.index { |i| i[:file] == @current_conf_file }
         log_warn(
           "Skip #{@current_conf_file} duplicate inclusion to #{file_name}")
         return

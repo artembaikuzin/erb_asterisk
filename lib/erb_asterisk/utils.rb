@@ -2,7 +2,7 @@ module ErbAsterisk
   module Utils
     # Escape special symbols in extension name
     #
-    # vnov -> v[n]on
+    # vnov -> v[n]ov
     # LongExtension1234! -> Lo[n]gE[x]te[n]sio[n]1234[!]
     #
     def escape_exten(exten)
