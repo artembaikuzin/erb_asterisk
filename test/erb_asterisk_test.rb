@@ -38,11 +38,11 @@ class ErbAsteriskTest < MiniTest::Test
   end
 
   def test_user_defined_configuration_path
-    cases = ['asterisk_without_templates/queues.conf']
+    cases = ['nesting/asterisk/queues.conf']
 
     run_test('test/cases/',
              '../../exe/erb_asterisk -t ../cases/asterisk_with_templates ' \
-             'asterisk_without_templates', cases)
+             'nesting/asterisk', cases)
   end
 
   def test_user_defined_templates
