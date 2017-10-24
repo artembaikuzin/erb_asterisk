@@ -38,7 +38,11 @@ class ErbAsteriskTest < MiniTest::Test
   end
 
   def test_user_defined_configuration_path
-    cases = ['nesting/asterisk/queues.conf']
+    cases = ['nesting/asterisk/queues.conf',
+             'nesting/asterisk/extensions.conf',
+             'nesting/asterisk/extensions.conf.includes',
+             'nesting/asterisk/entities/office/extensions.conf',
+             'nesting/asterisk/entities/office/extensions_priority.conf']
 
     run_test('test/cases/',
              '../../exe/erb_asterisk -t ../cases/asterisk_with_templates ' \
@@ -85,7 +89,7 @@ class ErbAsteriskTest < MiniTest::Test
 
     assert_equal(true, result)
     cases.each do |c|
-      assert_equal(File.read(c), File.read("#{c}.expected"))
+      assert_equal(File.read("#{c}.expected"), File.read(c))
     end
   end
 end

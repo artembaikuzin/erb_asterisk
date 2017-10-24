@@ -50,9 +50,9 @@ module ErbAsterisk
 
   def asterisk_root(opts)
     if opts.arguments.any?
-      custom_root = File.expand_path("#{opts.arguments.first}/")
+      custom_root = File.expand_path(opts.arguments.first)
       Dir.chdir(custom_root)
-      return custom_root
+      return "#{custom_root}/"
     end
     return './' if File.exist?(ERB_ASTERISK_CONF)
     return ERB_ASTERISK_DIR if Dir.exist?(ERB_ASTERISK_DIR)
