@@ -1,0 +1,13 @@
+#include "extensions.conf.includes"
+
+[inbound]
+<%= yield_here :global_inbound %>
+
+exten => <%= escape_exten 'vNoV!.123' %>,1,NoOp
+same => Dial(IAX2/longdistance)
+same => Hangup
+
+exten => _<%= escape_exten 'LongExtension1234!' %>-X.,1,NoOp
+
+[outbound]
+<%= yield_here :outbound %>
