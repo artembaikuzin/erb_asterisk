@@ -176,7 +176,7 @@ EXTERNAL_HOST = 'no-ip.some.host.eg'
 ### Command line arguments
 
 ```
-usage: exe/erb_asterisk [options]
+usage: erb_asterisk [options] [asterisk_config_path]
     -t, --templates  set templates path (e.g.: ~/.erb_asterisk)
     -v, --version    print the version
     -h, --help       print this help
