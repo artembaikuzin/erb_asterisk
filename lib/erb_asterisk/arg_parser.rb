@@ -5,6 +5,8 @@ module ErbAsterisk
   class ArgParser
     def execute
       Slop.parse do |o|
+        o.banner = 'usage: erb_asterisk [options] [asterisk_config_path]'
+
         o.string '-t', '--templates',
                  'set templates path (e.g.: ~/.erb_asterisk)'
         o.bool '-v', '--verbose', 'enable verbose mode'

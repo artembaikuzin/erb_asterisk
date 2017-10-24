@@ -37,6 +37,14 @@ class ErbAsteriskTest < MiniTest::Test
     assert_equal(system('../../../exe/erb_asterisk'), false)
   end
 
+  def test_user_defined_configuration_path
+    cases = ['asterisk_without_templates/queues.conf']
+
+    run_test('test/cases/',
+             '../../exe/erb_asterisk -t ../cases/asterisk_with_templates ' \
+             'asterisk_without_templates', cases)
+  end
+
   def test_user_defined_templates
     cases = ['iax_register.conf', 'iax_friends.conf']
     run_test('test/cases/user_defined_templates/',
@@ -75,7 +83,7 @@ class ErbAsteriskTest < MiniTest::Test
 
     result = system(command)
 
-    assert_equal(result, true)
+    assert_equal(true, result)
     cases.each do |c|
       assert_equal(File.read(c), File.read("#{c}.expected"))
     end

@@ -23,7 +23,7 @@ module ErbAsterisk
     init_instance(opts)
     load_project_file
 
-    root = asterisk_root
+    root = asterisk_root(opts)
     @templates_path = "#{root}templates".freeze
 
     render_files(root)
@@ -47,7 +47,8 @@ module ErbAsterisk
     @user_templates = File.expand_path("#{user_path}/templates")
   end
 
-  def asterisk_root
+  def asterisk_root(opts)
+    return "#{opts.arguments.first}/" if opts.arguments.any?
     return './' if File.exist?(ERB_ASTERISK_CONF)
     return ERB_ASTERISK_DIR if Dir.exist?(ERB_ASTERISK_DIR)
     raise 'Asterisk configuration not found'
